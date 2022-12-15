@@ -8,6 +8,7 @@ import tensorflow as tf
 from a2c_learn import A2Cagent
 import cv2
 import itertools
+import imageio
 
 
 def main(depth1, depth2, depth3):
@@ -23,10 +24,12 @@ def main(depth1, depth2, depth3):
 
     time = 0
     state, info = env.reset() # 환경을 초기화하고 초기 상태 관측
+    images = []
 
     while True:
         time_image = env.render()
         video_writer.write(time_image)
+        images.append(time_image)
         
         action = agent.actor(tf.convert_to_tensor([state], dtype=tf.float32))[0][0] # 행동 계산
         state, reward, term, trunc, _ = env.step(action)  # 환경으로 부터 다음 상태, 보상 받음
@@ -38,6 +41,7 @@ def main(depth1, depth2, depth3):
             break
     env.close()
     video_writer.release()
+    imageio.mimsave(agent.save_path.joinpath('project').with_suffix('.gif').as_posix(), images, fps=15)
 
 if __name__=="__main__":
     num_layers = 3
