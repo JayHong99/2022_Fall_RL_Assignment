@@ -11,6 +11,7 @@ from tensorflow.keras.optimizers import Adam
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
+import sys
 
 
 ## A2C 액터 신경망
@@ -261,7 +262,7 @@ class A2Cagent(object):
 
 
             # 에피소드마다 결과 출력
-            print('Episode: ', ep+1, 'Time: ', time, 'Reward: ', episode_reward)
+            sys.stdout.write("\rEpisode: {}, Time: {}, Reward: {}".format(ep+1, time, episode_reward))
 
             self.save_epi_reward.append(episode_reward)
 
@@ -283,6 +284,6 @@ class A2Cagent(object):
         plt.plot(self.save_epi_reward)
         plt.xlabel('Episode')
         plt.ylabel('Total Reward')
-        plt.savefig(self.save_path.joinpath('/pendulum_epi_reward.png'))
+        plt.savefig(self.save_path.joinpath('pendulum_epi_reward.png'))
         plt.show()
 

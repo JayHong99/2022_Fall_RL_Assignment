@@ -7,6 +7,7 @@ from a2c_learn import A2Cagent
 import gym
 import itertools
 
+
 def main(actor_d1, actor_d2, actor_d3, critic_d1, critic_d2, critic_d3):
 
     max_episode_num = 1000   # 최대 에피소드 설정
