@@ -41,7 +41,7 @@ def main(depth1, depth2, depth3):
 
 if __name__=="__main__":
     num_layers = 3
-    node_options = [4, 16, 32, 64]
+    node_options = [4, 16, 32, 64, 128]
     layer_possibilities = [node_options] * num_layers # 3 Layer 선택 필요
     layer_node_permutations = list(itertools.product(*layer_possibilities))
 

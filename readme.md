@@ -61,12 +61,14 @@ bash a2c/a2c_run.sh
 <b> 결과 </b>
 - Reward Plot
 
-![Alt text](./a2c/Results/total.png?raw=true "Reward Plot")
+![Reward Plot](./a2c/Results/total.png?raw=true "Reward Plot")
 
-- Reward Plot : 10 episode 단위로 average하고, std를 표시함
+- Reward Plot : 10 episode 단위로 average하고, 해당 구간 내의 reward의 std를 표시함
+- 128 -> 64 -> 16의 Model Architecture 선정
+    - Best Reward가
 
-![Alt text](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot")
-
+![Scaled Reward plot](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot")
+![best Model](./a2c/Results/Best_Model.mpy?raw=true "Best Model")
 
 ### Question - b) 
 ```
