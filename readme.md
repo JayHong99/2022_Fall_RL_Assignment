@@ -68,7 +68,7 @@ bash a2c/a2c_run.sh
     - Best Reward가
 
 ![Scaled Reward plot](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot")
-![best Model](./a2c/Results/Best_Model.mpy?raw=true "Best Model")
+![best Model](./a2c/Results/Best_Model.mp4?raw=true "Best Model")
 
 ### Question - b) 
 ```
