@@ -1,9 +1,9 @@
 ## 개발 환경
-OS : Ubuntu 18.04\n
-Python : 3.8.5\n
-Tensorflow : 2.5.0\n
-Cuda : 11.3
-gym : 0.26.2
+OS : Ubuntu 18.04<br>
+Python : 3.8.5<br>
+Tensorflow : 2.5.0<br>
+Cuda : 11.3<br>
+gym : 0.26.2<br>
 
 ## A2C
 
