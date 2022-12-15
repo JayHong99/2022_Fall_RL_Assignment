@@ -39,18 +39,33 @@ done = term or trunc
 (성능비교 테이블과 x축은 에피소드 y축이 보상인 학습 곡선을 그려서 비교분석하세요.)
 ```
 <b> 실험 세팅 </b>
-- <b>Node Options : 4, 16, 32, 64</b>
-    - 선택 기준 : State가 3개이므로, Input Node가 64를 넘는 것은 의미가 없을것이라 생각하였음
-- <b>Layer Options</b> : 
-    - Combination of node options if Layer1 Node > Layer2 Node > Layer3 Node
-    - Selected Layer Options
-        - [32, 16, 4]
-        - [64, 16, 4]
-        - [64, 32, 4]
-        - [64, 32, 16]
-- Apply Layer options to Actor & Critic Networks Independently
-    - Compare total <b>4 * 4 options</b> to figure out the best model architecture.
-<b> 실험 결과 </b>
+- <b>Node Options : 4, 16, 32, 64, 128</b>
+    - 기존 64, 32, 16 Node에 4와 128을 선택하는 경우의 수를 추가하였음
+    - Node는 각 Layer의 Node 수를 의미함
+
+- <b> Layer Options </b>
+    - 3층 Layer는 각각 Node Options에서 하나를 선택할 수 있음
+    - 모든 Combination을 만들고, Selection Criteria를 만들었음
+    - Selection Criteria
+        - Layer 1 Node > Layer 2 Node >= Layer 3 Node
+        - Layer 1 Node >= 32
+        - Layer 2 Node >= 16
+        - Lyaer 3 Node <= 16
+    - Finally, 12 Selected Layer Options are selected
+    
+<b> 실험 </b>
+```python
+bash a2c/a2c_run.sh
+```
+
+<b> 결과 </b>
+- Reward Plot
+
+![Alt text](./a2c/Results/total.png?raw=true "Reward Plot")
+
+- Reward Plot : 10 episode 단위로 average하고, std를 표시함
+
+![Alt text](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot")
 
 
 ### Question - b) 

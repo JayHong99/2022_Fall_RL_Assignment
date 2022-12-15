@@ -7,19 +7,15 @@ import gym
 import tensorflow as tf
 from a2c_learn import A2Cagent
 import cv2
-from pathlib import Path
 import itertools
 
 
-def main():
+def main(depth1, depth2, depth3):
 
     env_name = 'Pendulum-v1'
     env = gym.make(env_name, max_episode_steps=400, render_mode='rgb_array')
 
-    agent = A2Cagent(env,
-                    actor_d1=actor_d1, actor_d2=actor_d2, actor_d3= actor_d3,
-                    critic_d1=critic_d1, critic_d2=critic_d2, critic_d3=critic_d3
-                    )
+    agent = A2Cagent(env, depth1 = depth1, depth2 = depth2, depth3 = depth3)
 
     agent.load_weights()  # 신경망 파라미터를 가져옴
     video_writer = cv2.VideoWriter(agent.save_path.joinpath('project').with_suffix('.mp4').as_posix(),
@@ -49,11 +45,8 @@ if __name__=="__main__":
     layer_possibilities = [node_options] * num_layers # 3 Layer 선택 필요
     layer_node_permutations = list(itertools.product(*layer_possibilities))
 
-    layer_node_permutations = [[d1,d2,d3] for d1,d2,d3 in layer_node_permutations if d1 > d2 > d3]
-    actor_node_permutations = layer_node_permutations
-    critic_node_permutations = layer_node_permutations
-
-    for actor_d1, actor_d2, actor_d3 in actor_node_permutations:
-        for critic_d1, critic_d2, critic_d3 in critic_node_permutations:
-            print(f"actor_d1: {actor_d1}, actor_d2: {actor_d2}, actor_d3: {actor_d3}, critic_d1: {critic_d1}, critic_d2: {critic_d2}, critic_d3: {critic_d3}")
-            main(actor_d1, actor_d2, actor_d3, critic_d1, critic_d2, critic_d3)
+    layer_node_permutations = [[d1, d2, d3] for d1, d2, d3 in layer_node_permutations if d1 > d2 >= d3]
+    layer_node_permutations = [[d1, d2, d3] for d1, d2, d3 in layer_node_permutations if d1 >= 32 and d2 >= 16 and d3 <= 16]
+    for depth1, depth2, depth3 in layer_node_permutations:
+        print(f"Depth 1 : {depth1}, Depth 2 : {depth2}, Depth 3 : {depth3}")
+        main(depth1,depth2,depth3)

@@ -63,10 +63,9 @@ class Critic(Model):
 class A2Cagent(object):
 
     def __init__(self, env, gamma=0.95, batch_size=32, actor_lr=0.0001, critic_lr=0.001,
-                    actor_d1 = 64, actor_d2 = 32, actor_d3 = 16,
-                    critic_d1 = 64, critic_d2 = 32, critic_d3 = 16,
+                    depth1 = 64, depth2 = 32, depth3 = 16
                 ):
-        self.save_path = Path(f'a2c/Results/Actor_{actor_d1}_{actor_d2}_{actor_d3}_Critic_{critic_d1}_{critic_d2}_{critic_d3}')
+        self.save_path = Path(f'a2c/Results/Model_{depth1}_{depth2}_{depth3}')
         self.save_path.mkdir(parents=True, exist_ok=True)
 
         # 하이퍼파라미터
@@ -86,8 +85,8 @@ class A2Cagent(object):
         self.std_bound = [1e-2, 1.0]
 
         # 액터 신경망 및 크리틱 신경망 생성
-        self.actor = Actor(self.action_dim, self.action_bound, actor_d1, actor_d2, actor_d3)
-        self.critic = Critic(critic_d1, critic_d2, critic_d3)
+        self.actor = Actor(self.action_dim, self.action_bound, depth1, depth2, depth3)
+        self.critic = Critic(depth1, depth2, depth3)
         self.actor.build(input_shape=(None, self.state_dim))
         self.critic.build(input_shape=(None, self.state_dim))
 
@@ -160,8 +159,8 @@ class A2Cagent(object):
 
     ## 신경망 파라미터 로드
     def load_weights(self):
-        self.actor.load_weights(self.save_path + 'pendulum_actor.h5')
-        self.critic.load_weights(self.save_path + 'pendulum_critic.h5')
+        self.actor.load_weights(self.save_path.joinpath('pendulum_actor.h5'))
+        self.critic.load_weights(self.save_path.joinpath('pendulum_critic.h5'))
 
 
     ## 배치에 저장된 데이터 추출
