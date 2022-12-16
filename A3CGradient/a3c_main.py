@@ -8,7 +8,7 @@ from a3c_learn import A3Cagent
 def main():
 
     max_episode_num = 1000  # 최대 에피소드 설정
-    env_name = 'Pendulum-v0'  # 환경으로 OpenAI Gym의 pendulum-v0 설정
+    env_name = 'Pendulum-v1'  # 환경으로 OpenAI Gym의 pendulum-v0 설정
     agent = A3Cagent(env_name)  # A3C 에이전트 객체
     # 학습 진행
     agent.train(max_episode_num)

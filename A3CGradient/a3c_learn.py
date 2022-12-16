@@ -16,9 +16,12 @@ import threading
 import multiprocessing
 
 
+from pathlib import Path
+save_path = Path('A3CGradient/Results/A3C')
+save_path.mkdir(exist_ok=True, parents=True)
+
 ## 액터 신경망
 class Actor(Model):
-
     def __init__(self, action_dim, action_bound):
         super(Actor, self).__init__()
         self.action_bound = action_bound
@@ -74,7 +77,7 @@ class A3Cagent(object):
         # 학습할 환경 설정
         self.env_name = env_name
         self.WORKERS_NUM = multiprocessing.cpu_count() # 워커의 개수
-        env = gym.make(env_name)
+        env = gym.make(env_name, max_episode_steps=300)
         # 상태변수 차원
         self.state_dim = env.observation_space.shape[0]
         # 행동 차원
@@ -94,8 +97,8 @@ class A3Cagent(object):
 
     ## 신경망 파라미터 로드
     def load_weights(self, path):
-        self.global_actor.load_weights(path + 'pendulum_actor.h5')
-        self.global_critic.load_weights(path + 'pendulum_critic.h5')
+        self.global_actor.load_weights(save_path.joinpath('pendulum_actor.h5'))
+        self.global_critic.load_weights(save_path.joinpath('pendulum_critic.h5'))
 
     ## 학습
     def train(self, max_episode_num):
@@ -114,7 +117,7 @@ class A3Cagent(object):
             worker.join()
 
         # 학습이 끝난 후, 글로벌 누적 보상값 저장
-        np.savetxt('./save_weights/pendulum_epi_reward.txt', global_episode_reward)
+        np.savetxt(save_path.joinpath('/pendulum_epi_reward.txt'), global_episode_reward)
         print(global_episode_reward)
 
 
@@ -139,7 +142,7 @@ class A3Cworker(threading.Thread):
         self.max_episode_num = max_episode_num
 
         # 워커의 환경 생성
-        self.env = gym.make(env_name)
+        self.env = gym.make(env_name, max_episode_steps=300)
         self.worker_name = worker_name
 
         # 글로벌 신경망 공유
@@ -259,7 +262,7 @@ class A3Cworker(threading.Thread):
             # 에피소드 초기화
             step, episode_reward, done = 0, 0, False
             # 환경 초기화 및 초기 상태 관측
-            state = self.env.reset()
+            state, info = self.env.reset()
             # 에피소드 종료 시까지 다음을 반복
             while not done:
 
@@ -270,7 +273,8 @@ class A3Cworker(threading.Thread):
                 # 행동 범위 클리핑
                 action = np.clip(action, -self.action_bound, self.action_bound)
                 # 다음 상태, 보상 관측
-                next_state, reward, done, _ = self.env.step(action)
+                next_state, reward, term, trunc, _ = self.env.step(action)
+                done = term or trunc
                 # shape 변환
                 state = np.reshape(state, [1, self.state_dim])
                 action = np.reshape(action, [1, self.action_dim])
@@ -320,5 +324,5 @@ class A3Cworker(threading.Thread):
                     global_episode_reward.append(episode_reward)
                     # 에피소드 10번마다 신경망 파라미터를 파일에 저장
                     if global_episode_count % 10 == 0:
-                        self.global_actor.save_weights("./save_weights/pendulum_actor.h5")
-                        self.global_critic.save_weights("./save_weights/pendulum_critic.h5")
+                        self.global_actor.save_weights(save_path.joinpath('pendulum_actor.h5'))
+                        self.global_critic.save_weights(save_path.joinpath('pendulum_critic.h5'))
