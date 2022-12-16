@@ -15,57 +15,38 @@ import sys
 
 
 ## A2C 액터 신경망
-class Actor(Model):
-
-    def __init__(self, action_dim, action_bound, depth1, depth2, depth3):
-        super(Actor, self).__init__()
+class ActorCritic(Model) : 
+    def __init__(self, action_dim, action_bound) : 
+        super(ActorCritic, self).__init__()
         self.action_bound = action_bound
 
-        self.h1 = Dense(depth1, activation='relu')
-        self.h2 = Dense(depth2, activation='relu')
-        self.h3 = Dense(depth3, activation='relu')
+        self.h1 = Dense(128, activation='relu')
+        self.h2 = Dense(64, activation='relu')
+        self.h3 = Dense(16, activation='relu')
         self.mu = Dense(action_dim, activation='tanh')
         self.std = Dense(action_dim, activation='softplus')
+        self.critic = Dense(1, activation='linear')
 
-    def call(self, state):
+    def call(self, state) : 
         x = self.h1(state)
         x = self.h2(x)
         x = self.h3(x)
         mu = self.mu(x)
         std = self.std(x)
+        v = self.critic(x)
 
         # 평균값을 [-action_bound, action_bound] 범위로 조정
         mu = Lambda(lambda x: x*self.action_bound)(mu)
 
-        return [mu, std]
-
-
-## A2C 크리틱 신경망
-class Critic(Model):
-
-    def __init__(self, depth1, depth2, depth3):
-        super(Critic, self).__init__()
-
-        self.h1 = Dense(depth1, activation='relu')
-        self.h2 = Dense(depth2, activation='relu')
-        self.h3 = Dense(depth3, activation='relu')
-        self.v = Dense(1, activation='linear')
-
-    def call(self, state):
-        x = self.h1(state)
-        x = self.h2(x)
-        x = self.h3(x)
-        v = self.v(x)
-        return v
+        return [mu, std, v]
 
 
 ## A2C 에이전트 클래스
 class A2Cagent(object):
 
-    def __init__(self, env, gamma=0.95, batch_size=32, actor_lr=0.0001, critic_lr=0.001,
-                    depth1 = 64, depth2 = 32, depth3 = 16
+    def __init__(self, env, gamma=0.95, batch_size=32, actor_lr=0.0001, critic_lr=0.001
                 ):
-        self.save_path = Path(f'a2c/Results/Model_{depth1}_{depth2}_{depth3}')
+        self.save_path = Path(f'a2c/Results/Integrated_A2C')
         self.save_path.mkdir(parents=True, exist_ok=True)
 
         # 하이퍼파라미터
@@ -85,17 +66,12 @@ class A2Cagent(object):
         self.std_bound = [1e-2, 1.0]
 
         # 액터 신경망 및 크리틱 신경망 생성
-        self.actor = Actor(self.action_dim, self.action_bound, depth1, depth2, depth3)
-        self.critic = Critic(depth1, depth2, depth3)
-        self.actor.build(input_shape=(None, self.state_dim))
-        self.critic.build(input_shape=(None, self.state_dim))
-
-        self.actor.summary()
-        self.critic.summary()
+        self.actor_critic = ActorCritic(self.action_dim, self.action_bound)
+        self.actor_critic.build(input_shape=(None, self.state_dim))
+        self.actor_critic.summary()
 
         # 옵티마이저 설정
-        self.actor_opt = Adam(self.ACTOR_LEARNING_RATE)
-        self.critic_opt = Adam(self.CRITIC_LEARNING_RATE)
+        self.actor_critic_opt = Adam(self.ACTOR_LEARNING_RATE)
 
         # 에프소드에서 얻은 총 보상값을 저장하기 위한 변수
         self.save_epi_reward = []
@@ -111,42 +87,13 @@ class A2Cagent(object):
 
     ## 액터 신경망에서 행동 샘플링
     def get_action(self, state):
-        mu_a, std_a = self.actor(state)
+        mu_a, std_a, _ = self.actor_critic(state)
         mu_a = mu_a.numpy()[0]
         std_a = std_a.numpy()[0]
         std_a = np.clip(std_a, self.std_bound[0], self.std_bound[1])
         action = np.random.normal(mu_a, std_a, size=self.action_dim)
         return action
 
-
-    ## 액터 신경망 학습
-    def actor_learn(self, states, actions, advantages):
-
-        with tf.GradientTape() as tape:
-            # 정책 확률밀도함수
-            mu_a, std_a = self.actor(states, training=True)
-            log_policy_pdf = self.log_pdf(mu_a, std_a, actions)
-
-            # 손실함수
-            loss_policy = log_policy_pdf * advantages
-            loss = tf.reduce_sum(-loss_policy)
-
-        # 그래디언트
-        grads = tape.gradient(loss, self.actor.trainable_variables)
-        self.actor_opt.apply_gradients(zip(grads, self.actor.trainable_variables))
-
-
-    ## 크리틱 신경망 학습
-    def critic_learn(self, states, td_targets):
-        with tf.GradientTape() as tape:
-            td_hat = self.critic(states, training=True)
-            loss = tf.reduce_mean(tf.square(td_targets-td_hat))
-
-        grads = tape.gradient(loss, self.critic.trainable_variables)
-        self.critic_opt.apply_gradients(zip(grads, self.critic.trainable_variables))
-
-
-    ## 시간차 타깃 계산
     def td_target(self, rewards, next_v_values, dones):
         y_i = np.zeros(next_v_values.shape)
         for i in range(next_v_values.shape[0]):
@@ -156,11 +103,40 @@ class A2Cagent(object):
                 y_i[i] = rewards[i] + self.GAMMA * next_v_values[i]
         return y_i
 
+    ## 신경망 학습
+    def learn(self, states, actions, next_states, train_rewards, dones):
+        with tf.GradientTape() as tape:
+            _, _, v_values = self.actor_critic(states)
+            _, _, next_v_values = self.actor_critic(next_states)
+            mu_a, std_a, td_hat = self.actor_critic(states, training = True)
+            
+
+            mu_a = tf.squeeze(mu_a)
+            std_a = tf.squeeze(std_a)
+            v_values = tf.squeeze(v_values)
+            next_v_values = tf.squeeze(next_v_values)
+            td_hat = tf.squeeze(td_hat)
+
+            td_targets = self.td_target(train_rewards, next_v_values, dones)
+            advantages = train_rewards + self.GAMMA * next_v_values - v_values
+
+            # 정책 신경망의 손실함수
+            loss_policy = self.log_pdf(mu_a, std_a, actions) * advantages
+            actor_loss = tf.reduce_mean(-loss_policy)
+
+            # 크리틱 신경망의 손실함수
+            
+            critic_loss = tf.reduce_mean(tf.square(td_targets-td_hat))
+            total_loss = actor_loss + critic_loss
+            
+        grads = tape.gradient(total_loss, self.actor_critic.trainable_variables)
+        self.actor_critic_opt.apply_gradients(zip(grads, self.actor_critic.trainable_variables))
+        return total_loss
+
 
     ## 신경망 파라미터 로드
     def load_weights(self):
-        self.actor.load_weights(self.save_path.joinpath('pendulum_actor.h5'))
-        self.critic.load_weights(self.save_path.joinpath('pendulum_critic.h5'))
+        self.actor_critic.load_weights(self.save_path.joinpath('pendulum_actor_critic.h5'))
 
 
     ## 배치에 저장된 데이터 추출
@@ -168,6 +144,7 @@ class A2Cagent(object):
         unpack = batch[0]
         for idx in range(len(batch)-1):
             unpack = np.append(unpack, batch[idx+1], axis=0)
+
         return unpack
 
 
@@ -186,6 +163,7 @@ class A2Cagent(object):
             state = np.reshape(state, [1, self.state_dim])
 
             while not done:
+
                 # 학습 가시화
                 # self.env.render()
                 # 행동 샘플링
@@ -234,23 +212,13 @@ class A2Cagent(object):
                 # 배치 비움
                 batch_state, batch_action, batch_reward, batch_next_state, batch_done = [], [], [], [], []
 
-                # 시간차 타깃 계산
-                next_v_values = self.critic(tf.convert_to_tensor(next_states, dtype=tf.float32))
-                td_targets = self.td_target(train_rewards, next_v_values.numpy(), dones)
-
-                # 크리틱 신경망 업데이트
-                self.critic_learn(tf.convert_to_tensor(states, dtype=tf.float32),
-                                  tf.convert_to_tensor(td_targets, dtype=tf.float32))
-
-                # 어드밴티지 계산
-                v_values = self.critic(tf.convert_to_tensor(states, dtype=tf.float32))
-                next_v_values = self.critic(tf.convert_to_tensor(next_states, dtype=tf.float32))
-                advantages = train_rewards + self.GAMMA * next_v_values - v_values
 
                 # 액터 신경망 업데이트
-                self.actor_learn(tf.convert_to_tensor(states, dtype=tf.float32),
+                self.learn(      tf.convert_to_tensor(states, dtype=tf.float32),
                                  tf.convert_to_tensor(actions, dtype=tf.float32),
-                                 tf.convert_to_tensor(advantages, dtype=tf.float32))
+                                 tf.convert_to_tensor(next_states, dtype=tf.float32),
+                                 tf.convert_to_tensor(train_rewards, dtype=tf.float32),
+                                 tf.convert_to_tensor(dones, dtype=tf.float32))
 
                 # 상태 업데이트
                 state = next_state
@@ -267,10 +235,9 @@ class A2Cagent(object):
             # 에피소드 10번마다 신경망 파라미터를 파일에 저장
             if ep % 10 == 0:
                 
-                self.actor.save_weights(self.save_path.joinpath('pendulum_actor.h5'))
-                self.critic.save_weights(self.save_path.joinpath('pendulum_critic.h5'))
+                self.actor_critic.save_weights(self.save_path.joinpath('pendulum_actor_critic.h5'))
                 
-
+            
         # 학습이 끝난 후, 누적 보상값 저장
         np.savetxt(self.save_path.joinpath('pendulum_epi_reward.txt'), self.save_epi_reward)
         print(self.save_epi_reward)

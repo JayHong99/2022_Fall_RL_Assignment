@@ -5,18 +5,17 @@
 # 필요한 패키지 임포트
 import gym
 import tensorflow as tf
-from a2c_learn import A2Cagent
+from a2c_learn2 import A2Cagent
 import cv2
-import itertools
 import imageio
 
 
-def main(depth1, depth2, depth3):
+def main():
 
     env_name = 'Pendulum-v1'
     env = gym.make(env_name, max_episode_steps=400, render_mode='rgb_array')
 
-    agent = A2Cagent(env, depth1 = depth1, depth2 = depth2, depth3 = depth3)
+    agent = A2Cagent(env)
 
     agent.load_weights()  # 신경망 파라미터를 가져옴
     video_writer = cv2.VideoWriter(agent.save_path.joinpath('project').with_suffix('.mp4').as_posix(),
@@ -31,7 +30,7 @@ def main(depth1, depth2, depth3):
         video_writer.write(time_image)
         images.append(time_image)
         
-        action = agent.actor(tf.convert_to_tensor([state], dtype=tf.float32))[0][0] # 행동 계산
+        action = agent.actor_critic(tf.convert_to_tensor([state], dtype=tf.float32))[0][0] # 행동 계산
         state, reward, term, trunc, _ = env.step(action)  # 환경으로 부터 다음 상태, 보상 받음
         time += 1
         
@@ -44,13 +43,4 @@ def main(depth1, depth2, depth3):
     imageio.mimsave(agent.save_path.joinpath('project').with_suffix('.gif').as_posix(), images, fps=15)
 
 if __name__=="__main__":
-    num_layers = 3
-    node_options = [4, 16, 32, 64, 128]
-    layer_possibilities = [node_options] * num_layers # 3 Layer 선택 필요
-    layer_node_permutations = list(itertools.product(*layer_possibilities))
-
-    layer_node_permutations = [[d1, d2, d3] for d1, d2, d3 in layer_node_permutations if d1 > d2 >= d3]
-    layer_node_permutations = [[d1, d2, d3] for d1, d2, d3 in layer_node_permutations if d1 >= 32 and d2 >= 16 and d3 <= 16]
-    for depth1, depth2, depth3 in layer_node_permutations:
-        print(f"Depth 1 : {depth1}, Depth 2 : {depth2}, Depth 3 : {depth3}")
-        main(depth1,depth2,depth3)
+    main()

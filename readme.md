@@ -61,22 +61,27 @@ bash a2c/a2c_run.sh
 <b> 결과 </b>
 - Reward Plot
 
-![Reward Plot](./a2c/Results/total.png?raw=true "Reward Plot")
+![Reward Plot](./a2c/Results/total.png?raw=true "Reward Plot" width="300" height="200")
 
 - Reward Plot : 10 episode 단위로 average하고, 해당 구간 내의 reward의 std를 표시함
 - 128 -> 64 -> 16의 Model Architecture 선정
-    - Best Reward가
+    - 빠른 학습 속도
+    - 가장 높은 reward (-0.03)
 
-![Scaled Reward plot](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot")
-![best Model](./a2c/Results/best_model.gif "Best Model")
+![Scaled Reward plot](./a2c/Results/scaled_total.png?raw=true "Scaled Reward Plot" width="300" height="200")
+![best Model](./a2c/Results/best_model.gif "Best Model" width="300" height="200")
 
 ### Question - b) 
 ```
-a)에서 찾은 최적구조를 아래와 같이 합쳐진 정책 신경망과 가치 신경망의 형태로 변경하여 성능을 비교하세요. 
+a)에서 찾은 최적구조를 합쳐진 정책 신경망과 가치 신경망의 형태로 변경하여 성능을 비교하세요. 
 (x축은 에피소드 y축이 보상인 학습 곡선을 그려서 비교하세요.)
 ```
+![compare Model](./a2c/Results/scaled_compare.png "Compare Model" width="300" height="200")
 
 ### Question - c) 
 ```
 변경된 코드도 제출하세요. 
+python a2c/a2c_main2.py
+python a2c/a2c_learn2.py # 해당 부분에서 수정
+python a2c/a2c_load_play2.py
 ```

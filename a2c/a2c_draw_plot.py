@@ -58,7 +58,7 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
     custom_palette = sns.color_palette("Paired", 12)
     for model_name in data.columns[2:]:
         sns.lineplot(data, x = 'episodes_10', y = model_name, ax=ax, label=model_name, palette=custom_palette)
-    ax.set_ylim(-2500, 0)
+    ax.set_ylim(-3000, 0)
     ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
     ax.grid()
     fig.savefig(filename.with_name('scaled_' + filename.name))
@@ -66,7 +66,7 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
 
 def main():
     """Load rewards from file and draw plot."""
-    reward_paths = Path('a2c/Results').rglob('*reward.txt')
+    reward_paths = Path('a2c/Results').rglob('Model*/*reward.txt')
     for path in reward_paths:
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
     
@@ -76,6 +76,21 @@ def main():
         total_reward_df[model_name] = rewards['rewards'].values
     draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('a2c/Results/total.png'))
 
+def main2() : 
+    """
+    Draw plot for question 2
+    """
+    reward_path1 = Path('a2c/Results/Model_128_64_16/pendulum_epi_reward.txt')
+    reward_path2 = Path('a2c/Results/Integrated_A2C/pendulum_epi_reward.txt')
+    for path in [reward_path1, reward_path2]:
+        load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
+    
+    total_reward_df = pd.DataFrame(range(1000), columns = ['episodes'])
+    total_reward_df['episodes_10'] = total_reward_df['episodes'] // 10 * 10
+    for rewards, model_name in total_rewards:
+        total_reward_df[model_name] = rewards['rewards'].values
+    draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('a2c/Results/compare.png'))
 
 if __name__ == "__main__" :
-    main()
+    # main()
+    main2()
