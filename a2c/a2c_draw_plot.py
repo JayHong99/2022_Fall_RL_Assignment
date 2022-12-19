@@ -47,7 +47,7 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
     custom_palette = sns.color_palette("Paired", 12)
     for model_name in data.columns[2:]:
         sns.lineplot(data, x = 'episodes', y = model_name, ax=ax, label=model_name, palette=custom_palette)
-    ax.set_ylim(-2500, 0)
+    ax.set_ylim(-3000, 0)
     ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
     ax.grid()
     fig.savefig(filename)
@@ -67,7 +67,8 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
 def main():
     """Load rewards from file and draw plot."""
     #reward_paths = Path('a2c/Results').rglob('Model*/*reward.txt')
-    reward_paths = Path('a2c/Results/Integrated_A2C').rglob('*reward.txt')
+    #reward_paths = Path('a2c/Results/Integrated_A2C').rglob('*reward.txt')
+    reward_paths = Path('a2c/Results').rglob('*.reward.txt')
     for path in reward_paths:
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
     
