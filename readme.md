@@ -95,11 +95,29 @@ python a2c/a2c_load_play2.py
 (성능비교 테이블과 x축은 에피소드 y축이 보상인 학습곡선을 그려서 비교분석하세요.).
 ```
 
+- Intermediate Model : 64 -> 32 -> 16
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/scaled_total_reward.png' width='800px' height='500px'>
+    - Synchronous 
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A2C.gif' width='800px' height='500px'>
+    - Asynchronous
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A3C.gif' width='800px' height='500px'>
+
+- Intermediate Model : 128 -> 64 -> 16
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/scaled_total_reward.png' width='800px' height='500px'>
+    - Synchronous 
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A2C.gif' width='800px' height='500px'>
+    - Asynchronous
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A3C.gif' width='800px' height='500px'>
+
 ### Question - b) 
 ```
  기존 그래디언트 병렬화 방법을 데이터 병렬화 방법으로 변경하고 비교분석하세요. 
  (성능비교 테이블과 x축은 에피소드 y축이 보상인 학습곡선을 그려서 비교분석하세요.).
 ```
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/scaled_compare.png' width='800px' height='500px'>
+- Integrated Model
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/Integrated_A3C/project.gif' width='800px' height='500px'>
+
 
 ### Question - c) 
 ```
