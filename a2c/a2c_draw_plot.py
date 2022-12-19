@@ -66,7 +66,8 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
 
 def main():
     """Load rewards from file and draw plot."""
-    reward_paths = Path('a2c/Results').rglob('Model*/*reward.txt')
+    #reward_paths = Path('a2c/Results').rglob('Model*/*reward.txt')
+    reward_paths = Path('a2c/Results/Integrated_A2C').rglob('*reward.txt')
     for path in reward_paths:
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
     
