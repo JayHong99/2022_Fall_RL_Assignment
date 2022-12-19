@@ -44,7 +44,7 @@ class ActorCritic(Model) :
 ## A2C 에이전트 클래스
 class A2Cagent(object):
 
-    def __init__(self, env, gamma=0.95, batch_size=32, actor_lr=0.0001, critic_lr=0.001
+    def __init__(self, env, gamma=0.95, batch_size=32, actor_critic_lr=0.0001
                 ):
         self.save_path = Path(f'a2c/Results/Integrated_A2C')
         self.save_path.mkdir(parents=True, exist_ok=True)
@@ -52,8 +52,7 @@ class A2Cagent(object):
         # 하이퍼파라미터
         self.GAMMA = gamma
         self.BATCH_SIZE = batch_size
-        self.ACTOR_LEARNING_RATE = actor_lr
-        self.CRITIC_LEARNING_RATE = critic_lr
+        self.ACTOR_CRITIC_LEARNING_RATE = actor_critic_lr
         # 환경
         self.env = env
         # 상태변수 차원
@@ -71,7 +70,7 @@ class A2Cagent(object):
         self.actor_critic.summary()
 
         # 옵티마이저 설정
-        self.actor_critic_opt = Adam(self.ACTOR_LEARNING_RATE)
+        self.actor_critic_opt = Adam(self.ACTOR_CRITIC_LEARNING_RATE)
 
         # 에프소드에서 얻은 총 보상값을 저장하기 위한 변수
         self.save_epi_reward = []
@@ -207,7 +206,7 @@ class A2Cagent(object):
                 batch_state, batch_action, batch_reward, batch_next_state, batch_done = [], [], [], [], []
 
 
-                # 액터 신경망 업데이트
+                # 액터크리틱 신경망 업데이트
                 self.learn(      tf.convert_to_tensor(states, dtype=tf.float32),
                                  tf.convert_to_tensor(actions, dtype=tf.float32),
                                  tf.convert_to_tensor(train_rewards, dtype=tf.float32),

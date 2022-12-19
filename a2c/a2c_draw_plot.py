@@ -68,7 +68,7 @@ def main():
     """Load rewards from file and draw plot."""
     #reward_paths = Path('a2c/Results').rglob('Model*/*reward.txt')
     #reward_paths = Path('a2c/Results/Integrated_A2C').rglob('*reward.txt')
-    reward_paths = Path('a2c/Results').rglob('*.reward.txt')
+    reward_paths = Path('a2c/Results').rglob('*reward.txt')
     for path in reward_paths:
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
     
@@ -94,5 +94,5 @@ def main2() :
     draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('a2c/Results/compare.png'))
 
 if __name__ == "__main__" :
-    # main()
+    main()
     main2()

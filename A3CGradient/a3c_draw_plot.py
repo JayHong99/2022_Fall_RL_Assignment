@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-total_rewards = []
+
 def draw_plot(data, title, xlabel, ylabel, model_name, filename):
     """Draw plot of data and save it to file."""
     plt.clf()
@@ -66,31 +66,48 @@ def draw_total_plot(data, title, xlabel, ylabel, filename):
 
 def main():
     """Load rewards from file and draw plot."""
-    reward_paths = Path('A3CGradient/Results').rglob('*.reward.txt')
+    reward_paths = Path('A3CGradient/Results').rglob('*reward.txt')
     for path in reward_paths:
+        print(path)
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
-    
-    total_reward_df = pd.DataFrame(range(1000), columns = ['episodes'])
+    reward_lengths = max([x.shape[0] for x, _ in total_rewards])
+    print(reward_lengths)
+    total_reward_df = pd.DataFrame(range(reward_lengths), columns = ['episodes'])
     total_reward_df['episodes_10'] = total_reward_df['episodes'] // 10 * 10
     for rewards, model_name in total_rewards:
-        total_reward_df[model_name] = rewards['rewards'].values
-    draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('a2c/Results/total.png'))
+        if rewards.shape[0] != reward_lengths : 
+            rewards = list(rewards['rewards'].values)
+            rewards += [rewards[-1]] * (reward_lengths - len(rewards))
+        else : 
+            rewards = rewards['rewards'].values
+    
+        total_reward_df[model_name] = rewards
+    draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('A3CGradient/Results/total.png'))
 
 def main2() : 
     """
     Draw plot for question 2
     """
-    reward_path1 = Path('A3CGradient/Results/Model_*/pendulum_epi_reward.txt')
+    reward_path1 = Path('A3CGradient/Results/Model_128_64_16/pendulum_epi_reward.txt')
     reward_path2 = Path('A3CGradient/Results/Integrated_A3C/pendulum_epi_reward.txt')
     for path in [reward_path1, reward_path2]:
         load_and_draw(path, 'Rewards by Episode', 'Episode', 'Reward', path.parent.name, path.with_suffix('.png'))
-    
-    total_reward_df = pd.DataFrame(range(1000), columns = ['episodes'])
+    reward_lengths = max([x.shape[0] for x, _ in total_rewards])
+    print(reward_lengths)
+    total_reward_df = pd.DataFrame(range(reward_lengths), columns = ['episodes'])
     total_reward_df['episodes_10'] = total_reward_df['episodes'] // 10 * 10
     for rewards, model_name in total_rewards:
-        total_reward_df[model_name] = rewards['rewards'].values
-    draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('a2c/Results/compare.png'))
+        if rewards.shape[0] != reward_lengths : 
+            rewards = list(rewards['rewards'].values)
+            rewards += [rewards[-1]] * (reward_lengths - len(rewards))
+        else : 
+            rewards = rewards['rewards'].values
+    
+        total_reward_df[model_name] = rewards
+    draw_total_plot(total_reward_df, 'Rewards by Episode', 'Episode', 'Reward', Path('A3CGradient/Results/compare.png'))
 
 if __name__ == "__main__" :
+    total_rewards = []
     main()
+    total_rewards = []
     main2()
