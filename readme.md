@@ -9,9 +9,9 @@ gym : 0.26.2<br>
 ### 개발환경 변경에 따른 코드 변경
 ```python
 # 1. gym에서 Pendulum-v0 지원 불가
-env_name = 'Pendulum-v1'
-->
 env_name = 'Pendulum-v0'
+->
+env_name = 'Pendulum-v1'
 
 # 2. env.reset()
 state = self.env.reset()
