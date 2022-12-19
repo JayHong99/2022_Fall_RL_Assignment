@@ -114,10 +114,6 @@ python a2c/a2c_load_play2.py
  기존 그래디언트 병렬화 방법을 데이터 병렬화 방법으로 변경하고 비교분석하세요. 
  (성능비교 테이블과 x축은 에피소드 y축이 보상인 학습곡선을 그려서 비교분석하세요.).
 ```
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/scaled_compare.png' width='800px' height='500px'>
-- Integrated Model
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/Integrated_A3C/project.gif' width='500px' height='500px'>
-
 
 ### Question - c) 
 ```
