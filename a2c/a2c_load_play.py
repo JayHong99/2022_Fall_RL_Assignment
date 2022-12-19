@@ -14,7 +14,7 @@ import imageio
 def main(depth1, depth2, depth3):
 
     env_name = 'Pendulum-v1'
-    env = gym.make(env_name, max_episode_steps=400, render_mode='rgb_array')
+    env = gym.make(env_name, max_episode_steps=300, render_mode='rgb_array')
 
     agent = A2Cagent(env, depth1 = depth1, depth2 = depth2, depth3 = depth3)
 

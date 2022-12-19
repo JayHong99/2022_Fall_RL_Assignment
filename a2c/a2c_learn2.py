@@ -104,18 +104,13 @@ class A2Cagent(object):
         return y_i
 
     ## 신경망 학습
-    def learn(self, states, actions, next_states, train_rewards, dones):
-        with tf.GradientTape() as tape:
-            _, _, v_values = self.actor_critic(states)
-            _, _, next_v_values = self.actor_critic(next_states)
-            mu_a, std_a, td_hat = self.actor_critic(states, training = True)
-            
+    def learn(self, states, actions, train_rewards, next_states, dones):
 
-            mu_a = tf.squeeze(mu_a)
-            std_a = tf.squeeze(std_a)
-            v_values = tf.squeeze(v_values)
-            next_v_values = tf.squeeze(next_v_values)
-            td_hat = tf.squeeze(td_hat)
+        with tf.GradientTape() as tape:
+            
+            _, _, next_v_values = self.actor_critic(next_states)
+            _, _, td_hat = self.actor_critic(next_states, training = True)
+            mu_a, std_a, v_values = self.actor_critic(states, training = True)
 
             td_targets = self.td_target(train_rewards, next_v_values, dones)
             advantages = train_rewards + self.GAMMA * next_v_values - v_values
@@ -123,9 +118,8 @@ class A2Cagent(object):
             # 정책 신경망의 손실함수
             loss_policy = self.log_pdf(mu_a, std_a, actions) * advantages
             actor_loss = tf.reduce_mean(-loss_policy)
-
+ 
             # 크리틱 신경망의 손실함수
-            
             critic_loss = tf.reduce_mean(tf.square(td_targets-td_hat))
             total_loss = actor_loss + critic_loss
             
@@ -216,8 +210,8 @@ class A2Cagent(object):
                 # 액터 신경망 업데이트
                 self.learn(      tf.convert_to_tensor(states, dtype=tf.float32),
                                  tf.convert_to_tensor(actions, dtype=tf.float32),
-                                 tf.convert_to_tensor(next_states, dtype=tf.float32),
                                  tf.convert_to_tensor(train_rewards, dtype=tf.float32),
+                                 tf.convert_to_tensor(next_states, dtype=tf.float32),
                                  tf.convert_to_tensor(dones, dtype=tf.float32))
 
                 # 상태 업데이트

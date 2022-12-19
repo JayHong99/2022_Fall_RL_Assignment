@@ -74,9 +74,12 @@ class A3Cagent(object):
 
     def __init__(self, env_name):
 
+        self.save_path = save_path
+
         # 학습할 환경 설정
         self.env_name = env_name
-        self.WORKERS_NUM = multiprocessing.cpu_count() # 워커의 개수
+        # self.WORKERS_NUM = multiprocessing.cpu_count() # 워커의 개수
+        self.WORKERS_NUM = 8
         env = gym.make(env_name, max_episode_steps=300)
         # 상태변수 차원
         self.state_dim = env.observation_space.shape[0]
@@ -96,7 +99,7 @@ class A3Cagent(object):
 
 
     ## 신경망 파라미터 로드
-    def load_weights(self, path):
+    def load_weights(self):
         self.global_actor.load_weights(save_path.joinpath('pendulum_actor.h5'))
         self.global_critic.load_weights(save_path.joinpath('pendulum_critic.h5'))
 
@@ -117,7 +120,7 @@ class A3Cagent(object):
             worker.join()
 
         # 학습이 끝난 후, 글로벌 누적 보상값 저장
-        np.savetxt(save_path.joinpath('/pendulum_epi_reward.txt'), global_episode_reward)
+        np.savetxt(save_path.joinpath('pendulum_epi_reward.txt'), global_episode_reward)
         print(global_episode_reward)
 
 
