@@ -98,16 +98,16 @@ python a2c/a2c_load_play2.py
 - Intermediate Model : 64 -> 32 -> 16
 <img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/scaled_total_reward.png' width='800px' height='500px'>
     - Synchronous 
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A2C.gif' width='800px' height='500px'>
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A2C.gif' width='500px' height='500px'>
     - Asynchronous
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A3C.gif' width='800px' height='500px'>
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_64_32_16/A3C.gif' width='500px' height='500px'>
 
 - Intermediate Model : 128 -> 64 -> 16
 <img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/scaled_total_reward.png' width='800px' height='500px'>
     - Synchronous 
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A2C.gif' width='800px' height='500px'>
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A2C.gif' width='500px' height='500px'>
     - Asynchronous
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A3C.gif' width='800px' height='500px'>
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/Compare_A2C_A3C/Model_128_64_16/A3C.gif' width='500px' height='500px'>
 
 ### Question - b) 
 ```
@@ -116,7 +116,7 @@ python a2c/a2c_load_play2.py
 ```
 <img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/scaled_compare.png' width='800px' height='500px'>
 - Integrated Model
-<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/Integrated_A3C/project.gif' width='800px' height='500px'>
+<img src = 'https://github.com/JayHong99/2022_Fall_RL_Assignment/blob/master/A3CGradient/Results/Integrated_A3C/project.gif' width='500px' height='500px'>
 
 
 ### Question - c) 
