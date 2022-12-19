@@ -1,6 +1,6 @@
 ## 개발 환경
 ### 환경
-OS : Ubuntu 18.04<br>
+OS : Centos 7<br>
 Python : 3.8.5<br>
 Tensorflow : 2.5.0<br>
 Cuda : 11.3<br>
