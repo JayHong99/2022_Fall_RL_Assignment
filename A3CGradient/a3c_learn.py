@@ -17,7 +17,7 @@ import multiprocessing
 
 
 from pathlib import Path
-save_path = Path('A3CGradient/Results/A3C')
+save_path = Path('A3CGradient/Results/A3C_128_64_16')
 save_path.mkdir(exist_ok=True, parents=True)
 
 ## 액터 신경망
@@ -26,8 +26,8 @@ class Actor(Model):
         super(Actor, self).__init__()
         self.action_bound = action_bound
 
-        self.h1 = Dense(64, activation='relu')
-        self.h2 = Dense(32, activation='relu')
+        self.h1 = Dense(128, activation='relu')
+        self.h2 = Dense(64, activation='relu')
         self.h3 = Dense(16, activation='relu')
         self.mu = Dense(action_dim, activation='tanh')
         self.std = Dense(action_dim, activation='softplus')
@@ -51,8 +51,8 @@ class Critic(Model):
     def __init__(self):
         super(Critic, self).__init__()
 
-        self.h1 = Dense(64, activation='relu')
-        self.h2 = Dense(32, activation='relu')
+        self.h1 = Dense(128, activation='relu')
+        self.h2 = Dense(64, activation='relu')
         self.h3 = Dense(16, activation='relu')
         self.v = Dense(1, activation='linear')
 
